@@ -6,10 +6,10 @@
 GamecubeController::GamecubeController(const char* name){
     setAllToFalse();
    
-	prev_joystick_x = -999;
-	prev_joystick_y = -999;
-	prev_cstick_x = -999;
-	prev_cstick_y = -999;
+    prev_joystick_x = -999;
+    prev_joystick_y = -999;
+    prev_cstick_x = -999;
+    prev_cstick_y = -999;
  
     for(int i = 0; i < 16; i++){
         prev_state[i] = false;
@@ -93,30 +93,30 @@ void GamecubeController::setAllToFalse(){
 }
 
 int GamecubeController::blockingCapture(){
-	bool waiting = true;
-	int retval = -1;
-	while(waiting){
-		capture();
-		for(int i = 0; i < 8; i++){
-			if(*getItem(i)){
-				retval = i; 
-				waiting = false;
-			}
-		}	
-	}
-	return retval;
+    bool waiting = true;
+    int retval = -1;
+    while(waiting){
+        capture();
+        for(int i = 0; i < 8; i++){
+            if(*getItem(i)){
+                retval = i; 
+                waiting = false;
+            }
+        }   
+    }
+    return retval;
 }
 
 void GamecubeController::capture(){
     fread((void*)data, sizeof(data), 1, device);
     setAllToFalse();
 
-	if((prev_joystick_x == -999) && (prev_joystick_y == -999) && (prev_cstick_x == -999) && (prev_cstick_y == -999)){
-		prev_joystick_x = data[0];
-		prev_joystick_y = data[1];
-		prev_cstick_x = data[3];
-		prev_cstick_y = data[4];
-	}
+    if((prev_joystick_x == -999) && (prev_joystick_y == -999) && (prev_cstick_x == -999) && (prev_cstick_y == -999)){
+        prev_joystick_x = data[0];
+        prev_joystick_y = data[1];
+        prev_cstick_x = data[3];
+        prev_cstick_y = data[4];
+    }
 
     for(int i = 0; i < 16; i++){
         State* temp = states[i];
