@@ -1,7 +1,75 @@
+#include "GamecubeController.h"
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 
 GamecubeController::GamecubeController(const char* name){
+    setAllToFalse();
+   
+	prev_joystick_x = -999;
+	prev_joystick_y = -999;
+	prev_cstick_x = -999;
+	prev_cstick_y = -999;
+ 
+    for(int i = 0; i < 16; i++){
+        prev_state[i] = false;
+    }
+    
+    states[0] = new State((long*)&data[6], 0x20); 
+    states[1] = new State((long*)&data[5], 0x1f);
+    states[2] = new State((long*)&data[5], 0x2f);
+    states[3] = new State((long*)&data[5], 0x8f);
+    states[4] = new State((long*)&data[5], 0x4f);
+    states[5] = new State((long*)&data[6], 0x1);
+    states[6] = new State((long*)&data[6], 0x2);
+    states[7] = new State((long*)&data[6], 0x4);
+    states[8] = new State((long*)&data[5], 0x0);
+    states[9] = new State((long*)&data[5], 0x1);
+    states[10] = new State((long*)&data[5], 0x2);
+    states[11] = new State((long*)&data[5], 0x3);
+    states[12] = new State((long*)&data[5], 0x4);
+    states[13] = new State((long*)&data[5], 0x5);
+    states[14] = new State((long*)&data[5], 0x6);
+    states[15] = new State((long*)&data[5], 0x7);
+    
+    nameOfDevice = name;
+}
+
+GamecubeController::~GamecubeController(){
+    close();
+}
+
+void GamecubeController::init(){
+    if((device = fopen(nameOfDevice, "rw")) == NULL)
+        perror("Failed to open the device: ");  
+    printf("connected to controller\n");
+}
+
+bool* GamecubeController::getItem(int i){
+    switch(i){
+        case 0: return &START_PRESSED;
+        case 1: return &Y_PRESSED;
+        case 2: return &X_PRESSED;
+        case 3: return &B_PRESSED;
+        case 4: return &A_PRESSED;
+        case 5: return &L_PRESSED;
+        case 6: return &R_PRESSED;
+        case 7: return &Z_PRESSED;
+        case 8: return &D_UP;
+        case 9: return &D_UP_D_RIGHT;
+        case 10: return &D_RIGHT;
+        case 11: return &D_RIGHT_D_DOWN;
+        case 12: return &D_DOWN;
+        case 13: return &D_DOWN_D_LEFT;
+        case 14: return &D_LEFT;
+        case 15: return &D_LEFT_D_UP;
+        default: break;
+    }
+    return false;
+}
+
+void GamecubeController::setAllToFalse(){
+
     A_PRESSED = false;
     B_PRESSED = false;
     X_PRESSED = false;
@@ -22,163 +90,55 @@ GamecubeController::GamecubeController(const char* name){
     JOYSTICK_Y = 0;
     CSTICK_X = 0;
     CSTICK_Y = 0;
-    
-    nameOfDevice = name;
-}
-
-GamecubeController::~GamecubeController(){
-    close();
-}
-
-void GamecubeController::init(){
-    if((device = fopen(nameOfDevice, "rw")) == NULL)
-        perror("Failed to open the device: ");  
 }
 
 void GamecubeController::capture(){
     fread((void*)data, sizeof(data), 1, device);
-    
-    if(data[6] == 0x20)
-        START_PRESSED  = true;  
-    else {
-        if(START_PRESSED)
-            START_PRESSED = false;
-    }
+    setAllToFalse();
 
-    if(data[5] ==  0x1f)
-        Y_PRESSED = true;
-    else{
-        if(Y_PRESSED)
-            Y_PRESSED = false;
-    }
+	if((prev_joystick_x == -999) && (prev_joystick_y == -999) && (prev_cstick_x == -999) && (prev_cstick_y == -999)){
+		prev_joystick_x = data[0];
+		prev_joystick_y = data[1];
+		prev_cstick_x = data[3];
+		prev_cstick_y = data[4];
+	}
 
-    if(data[5] == 0x2f)
-        X_PRESSED = true;
-    else{
-        if(X_PRESSED)
-            X_PRESSED = false;
-    }
-
-    if(data[5] == 0xffffff8f)
-        B_PRESSED = true;
-    else{
-        if(B_PRESSED)
-            B_PRESSED = false;
-    }
-
-    if(data[5] == 0x4f)
-        A_PRESSED = true;
-    else{
-        if(A_PRESSED)
-            A_PRESSED = false;
-    }
-
-    if(data[6] == 0x1)
-        L_PRESSED = true;
-    else{
-        if(L_PRESSED)
-            L_PRESSED = false;
-    }
-    
-    if(data[6] == 0x2)
-        R_PRESSED = true;
-    else{
-        if(R_PRESSED)
-            R_PRESSED = false;
-    }
-
-
-    if(data[6] == 0x4)
-        Z_PRESSED = true;
-    else{
-        if(Z_PRESSED)
-            Z_PRESSED = false;
-    }
-    
-    
-    if(data[5] == 0x0)
-        D_UP = true;
-    else{
-        if(D_UP)
-            D_UP = false;
-    }
-
-    if(data[5] == 0x1)
-        D_UP_D_RIGHT = true;
-    else{
-        if(D_UP_D_RIGHT)
-            D_UP_D_RIGHT = false;
-    }
-    
-    if(data[5] == 0x2)
-        D_RIGHT = true;
-    else{
-        if(D_RIGHT)
-            D_RIGHT = false;
-    }
-
-    if(data[5] == 0x3)
-        D_RIGHT_D_DOWN = true;
-    else{
-        if(D_RIGHT_D_DOWN)
-            D_RIGHT_D_DOWN = false;
-    }
-
-    if(data[5] == 0x4)
-        D_DOWN = true;
-    else{
-        if(D_DOWN)
-            D_DOWN = false;
-    }
-    
-    if(data[5] == 0x5)
-        D_DOWN_D_LEFT = true;
-    else{
-        if(D_DOWN_D_LEFT)
-            D_DOWN_D_LEFT = false;
-    }
-    
-    if(data[5] == 0x6)
-        D_LEFT = true;
-    else{
-        if(D_LEFT)
-            D_LEFT = false;
-    }
-
-    if(data[5] == 0x7)
-        D_LEFT_D_UP = true;
-    else{
-        if(D_LEFT_D_UP)
-            D_LEFT_D_UP = false;
+    for(int i = 0; i < 16; i++){
+        State* temp = states[i];
+        if((*(temp->current_state) & 0xff) == (temp->expected_state&0xff))
+            prev_state[i] = true;
+        else {
+            if(prev_state[i]){
+                prev_state[i] = false;
+                bool* var = getItem(i);
+                *var = true;
+            }
+        }
     }
 
     if(prev_joystick_x != data[0]){
         int diff = data[0] - prev_joystick_x;
         prev_joystick_x = data[0];
         JOYSTICK_X = diff;
-    } else
-        JOYSTICK_X = 0;
+    }
 
     if(prev_joystick_y != data[1]){
         int diff = data[1] - prev_joystick_y;
         prev_joystick_y = data[1];
         JOYSTICK_Y = diff;
-    } else 
-        JOYSTICK_Y = 0;
+    } 
 
     if(prev_cstick_x != data[3]){
         int diff = data[3] - prev_cstick_x;
         prev_cstick_x = data[3];
         CSTICK_X = diff;
-    } else 
-        CSTICK_X = 0;
+    }  
     
     if(prev_cstick_y != data[4]){
         int diff = data[4] - prev_cstick_y;
         prev_cstick_y = data[4];
         CSTICK_Y = diff;
-    } else 
-        CSTICK_Y = 0;
+    }  
 
 }
 
