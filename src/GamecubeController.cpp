@@ -92,6 +92,21 @@ void GamecubeController::setAllToFalse(){
     CSTICK_Y = 0;
 }
 
+int GamecubeController::blockingCapture(){
+	bool waiting = true;
+	int retval = -1;
+	while(waiting){
+		capture();
+		for(int i = 0; i < 8; i++){
+			if(*getItem(i)){
+				retval = i; 
+				waiting = false;
+			}
+		}	
+	}
+	return retval;
+}
+
 void GamecubeController::capture(){
     fread((void*)data, sizeof(data), 1, device);
     setAllToFalse();

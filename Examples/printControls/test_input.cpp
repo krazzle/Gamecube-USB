@@ -20,17 +20,10 @@ int main()
         if(gc->Y_PRESSED)
             printf("Y has been pressed\n");
         if(gc->START_PRESSED){
-            printf("Start has been pressed. Did you want to quit? Press A to quit and B to return\n");
-            bool wait = true;
-            while(wait){
-                gc->capture(); 
-                if(gc->A_PRESSED){
+            printf("Start has been pressed. Did you want to quit? Press A to quit and any other key to return\n");
+			gc->blockingCapture(); 
+            if(gc->A_PRESSED)
                     going = false;
-		    wait = false;
-		}
-                if(gc->B_PRESSED)
-                    wait = false;
-            }
         }
         if(gc->Z_PRESSED)
             printf("Z has been pressed\n");

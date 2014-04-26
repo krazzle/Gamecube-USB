@@ -10,22 +10,22 @@ public:
 
 class GamecubeController{
 public:
-	bool A_PRESSED;
-	bool B_PRESSED;
-	bool X_PRESSED;
-	bool Y_PRESSED;
-	bool START_PRESSED;
-	bool Z_PRESSED;
-	bool L_PRESSED;
-	bool R_PRESSED;
-	bool D_UP;
-	bool D_UP_D_RIGHT;
-	bool D_RIGHT;
-	bool D_RIGHT_D_DOWN;
-	bool D_DOWN;
-	bool D_DOWN_D_LEFT;
-	bool D_LEFT;
-	bool D_LEFT_D_UP;
+	bool START_PRESSED; 	// 0
+	bool Y_PRESSED;		// 1
+	bool X_PRESSED;		// 2
+	bool B_PRESSED; 	// 3
+	bool A_PRESSED;		// 4
+	bool L_PRESSED;		// 5
+	bool R_PRESSED;		// 6
+	bool Z_PRESSED;		// 7
+	bool D_UP;		// 8
+	bool D_UP_D_RIGHT;	// 9 
+	bool D_RIGHT;		// 10
+	bool D_RIGHT_D_DOWN;	// 11
+	bool D_DOWN;		// 12
+	bool D_DOWN_D_LEFT;	// 13
+	bool D_LEFT;		// 14
+	bool D_LEFT_D_UP;	// 15	
 
 	int JOYSTICK_X;
 	int JOYSTICK_Y;
@@ -38,6 +38,7 @@ public:
 	void init();
 	void close();
 	void capture();
+	int blockingCapture();
 
 private:	
 	bool* getItem(int i);
