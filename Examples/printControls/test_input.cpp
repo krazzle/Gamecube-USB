@@ -21,9 +21,9 @@ int main()
             printf("Y has been pressed\n");
         if(gc->START_PRESSED){
             printf("Start has been pressed. Did you want to quit? Press A to quit and any other key to return\n");
-			gc->blockingCapture(); 
+	    gc->blockingCapture(); 
             if(gc->A_PRESSED)
-                    going = false;
+            	going = false;
         }
         if(gc->Z_PRESSED)
             printf("Z has been pressed\n");
