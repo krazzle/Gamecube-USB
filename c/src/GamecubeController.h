@@ -1,28 +1,28 @@
-#include <iostream>
+#pragma once
 #include <stdio.h>
 
 struct State{
-	long* current_state;
-	char expected_state;
+	long* current;
+	char expected;
 };
 
 
-bool START_PRESSED; // 0
-bool Y_PRESSED;		// 1
-bool X_PRESSED;		// 2
-bool B_PRESSED; 	// 3
-bool A_PRESSED;		// 4
-bool L_PRESSED;		// 5
-bool R_PRESSED;		// 6
-bool Z_PRESSED;		// 7
-bool D_UP;			// 8
-bool D_UP_D_RIGHT;	// 9 
-bool D_RIGHT;		// 10
-bool D_RIGHT_D_DOWN;// 11
-bool D_DOWN;		// 12
-bool D_DOWN_D_LEFT;	// 13
-bool D_LEFT;		// 14
-bool D_LEFT_D_UP;	// 15	
+int START_PRESSED; // 0
+int Y_PRESSED;		// 1
+int X_PRESSED;		// 2
+int B_PRESSED; 	// 3
+int A_PRESSED;		// 4
+int L_PRESSED;		// 5
+int R_PRESSED;		// 6
+int Z_PRESSED;		// 7
+int D_UP;			// 8
+int D_UP_D_RIGHT;	// 9 
+int D_RIGHT;		// 10
+int D_RIGHT_D_DOWN;// 11
+int D_DOWN;		// 12
+int D_DOWN_D_LEFT;	// 13
+int D_LEFT;		// 14
+int D_LEFT_D_UP;	// 15	
 
 int JOYSTICK_X;
 int JOYSTICK_Y;
@@ -30,20 +30,20 @@ int CSTICK_X;
 int CSTICK_Y;
 
 
-void init(char *name);
-void close();
-void capture();
-int blockingCapture();
+void gc_init(char *name);
+void gc_close();
+void gc_capture();
+int gc_blockingCapture();
 
-bool* getItem(int i);
+int* getItem(int i);
 void setAllToFalse();	
 
 const char* nameOfDevice;
 FILE* device;
 char data[8];
-State* states[16];
+struct State* states[16];
 	
-bool prev_state[16];
+int prev_state[16];
 	
 int prev_joystick_x;
 int prev_joystick_y;

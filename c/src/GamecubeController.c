@@ -1,5 +1,4 @@
 #include "GamecubeController.h"
-#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -14,7 +13,7 @@ void gc_init(char* name){
 	int i;
 	for(i = 0; i < 16; i++){
 		states[i] = (struct State*) malloc(sizeof(struct State));
-		prev_state[i] = false;
+		prev_state[i] = 0;
 	}
 
 	states[0]->current = (long*)&data[6]; states[0]->expected = 0x20;
@@ -39,7 +38,7 @@ void gc_init(char* name){
     printf("connected to controller\n");
 }
 
-bool* getItem(int i){
+int* getItem(int i){
     switch(i){
         case 0: return &START_PRESSED;
         case 1: return &Y_PRESSED;
@@ -59,27 +58,27 @@ bool* getItem(int i){
         case 15: return &D_LEFT_D_UP;
         default: break;
     }
-    return false;
+    return 0;
 }
 
 void setAllToFalse(){
 
-    A_PRESSED = false;
-    B_PRESSED = false;
-    X_PRESSED = false;
-    Y_PRESSED = false;
-    START_PRESSED = false;
-    Z_PRESSED = false;
-    L_PRESSED = false;
-    R_PRESSED = false;
-    D_UP = false;
-    D_UP_D_RIGHT = false;
-    D_RIGHT = false;
-    D_RIGHT_D_DOWN = false;
-    D_DOWN = false;
-    D_DOWN_D_LEFT = false;
-    D_LEFT = false;
-    D_LEFT_D_UP = false;
+    A_PRESSED = 0;
+    B_PRESSED = 0;
+    X_PRESSED = 0;
+    Y_PRESSED = 0;
+    START_PRESSED = 0;
+    Z_PRESSED = 0;
+    L_PRESSED = 0;
+    R_PRESSED = 0;
+    D_UP = 0;
+    D_UP_D_RIGHT = 0;
+    D_RIGHT = 0;
+    D_RIGHT_D_DOWN = 0;
+    D_DOWN = 0;
+    D_DOWN_D_LEFT = 0;
+    D_LEFT = 0;
+    D_LEFT_D_UP = 0;
     JOYSTICK_X = 0;
     JOYSTICK_Y = 0;
     CSTICK_X = 0;
@@ -87,15 +86,15 @@ void setAllToFalse(){
 }
 
 int gc_blockingCapture(){
-    bool waiting = true;
+    int waiting = 1;
     int retval = -1;
     while(waiting){
-        capture();
+        gc_capture();
 		int i;
         for(i = 0; i < 8; i++){
             if(*getItem(i)){
                 retval = i; 
-                waiting = false;
+                waiting = 0;
             }
         }   
     }
@@ -115,14 +114,14 @@ void gc_capture(){
 
 	int i;
     for(i = 0; i < 16; i++){
-        State* temp = states[i];
-        if((*(temp->current_state) & 0xff) == (temp->expected_state&0xff))
-            prev_state[i] = true;
+        struct State* temp = states[i];
+        if((*(temp->current) & 0xff) == (temp->expected&0xff))
+            prev_state[i] = 1;
         else {
             if(prev_state[i]){
-                prev_state[i] = false;
-                bool* var = getItem(i);
-                *var = true;
+                prev_state[i] = 0;
+                int* var = getItem(i);
+                *var = 1;
             }
         }
     }
